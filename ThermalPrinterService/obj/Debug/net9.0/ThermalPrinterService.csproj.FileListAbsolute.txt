@@ -33,3 +33,4 @@ C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\obj\Debug\net
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\obj\Debug\net9.0\ThermalPrinterService.pdb
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\obj\Debug\net9.0\ThermalPrinterService.genruntimeconfig.cache
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\obj\Debug\net9.0\ref\ThermalPrinterService.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\obj\Debug\net9.0\ThermalPrinterService.sourcelink.json

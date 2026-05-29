@@ -14,7 +14,7 @@ public class PrinterService
         ConnectionMode = mode;
         IsConnected = true;
 
-        _logs.Add($"[{DateTime.Now}] Connected via {mode}");
+       AddLog("connect", "success", $"Connected via {mode}");
     }
 
     public object GetStatus()
@@ -31,17 +31,19 @@ public class PrinterService
     {
         if (!IsConnected)
         {
-            _logs.Add($"[{DateTime.Now}] ERROR - PrintText failed: Printer is not connected.");
+            AddLog("print_text", "error", "Printer is not connected.");
             throw new InvalidOperationException("Printer is not connected.");
         }
          _lastPrintedText = text;
-        Console.WriteLine($"Printing text: {text}");
-        _logs.Add($"[{DateTime.Now}] Printed text: {text}");
+        
+        var jobId = Guid.NewGuid().ToString();
+
+        AddLog("print_text", "success", $"Printed text: {text}",jobId);
     }
 
 
 
-// helper method  
+// helper method for adding log 
    private void AddLog(string operation, string status, string message, string? jobId = null)
 {
     _logs.Add(new LogEntry
@@ -66,19 +68,19 @@ public class PrinterService
 {
     if (!IsConnected)
     {
-        _logs.Add($"[{DateTime.Now}] ERROR - Reprint failed: Printer is not connected.");
+        AddLog("reprint", "error", "Printer is not connected.");
         throw new InvalidOperationException("Printer is not connected.");
     }
 
     if (string.IsNullOrWhiteSpace(_lastPrintedText))
     {
-        _logs.Add($"[{DateTime.Now}] ERROR - Reprint failed: No previous print found.");
+        AddLog("reprint", "error", "No previous print found.");
         throw new InvalidOperationException("No previous print found.");
     }
 
     Console.WriteLine($"Reprinting text: {_lastPrintedText}");
 
-    _logs.Add($"[{DateTime.Now}] Reprinted text: {_lastPrintedText}");
+    AddLog("reprint", "success", $"Reprinted text: {_lastPrintedText}");
 }
 
 
