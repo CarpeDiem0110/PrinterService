@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ThermalPrinterService.Models;
+using ThermalPrinterService.Dtos;
 using ThermalPrinterService.Services;
 
 namespace ThermalPrinterService.Controllers;
@@ -16,7 +16,7 @@ public class PrinterController : ControllerBase
     }
 
     [HttpPost("connect")]
-    public IActionResult Connect([FromBody] ConnectRequest request)
+    public IActionResult Connect([FromBody] ConnectRequestDto request)
     {
         _printerService.Connect(request.Mode);
 
@@ -33,7 +33,7 @@ public class PrinterController : ControllerBase
     }
 
     [HttpPost("print/text")]
-    public IActionResult PrintText([FromBody] PrintTextRequest request)
+    public IActionResult PrintText([FromBody] PrintTextRequestDto request)
     {
     _printerService.PrintText(request.Text);
 
@@ -46,7 +46,7 @@ public class PrinterController : ControllerBase
 
 
     [HttpPost("print/image")]
-    public IActionResult PrintImage([FromBody] PrintImageRequest request)
+    public IActionResult PrintImage([FromBody] PrintImageRequestDto request)
     {
     _printerService.PrintImage(request.ImageBase64);
 
@@ -78,7 +78,7 @@ public class PrinterController : ControllerBase
 
 
     [HttpPost("simulate-error")]
-    public IActionResult SimulateError([FromBody] SimulateErrorRequest request)
+    public IActionResult SimulateError([FromBody] SimulateErrorRequestDto request)
     {
         _printerService.SimulateError(request.ErrorCode);
 

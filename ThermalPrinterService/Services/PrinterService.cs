@@ -1,5 +1,7 @@
 namespace ThermalPrinterService.Services;
 
+using Microsoft.AspNetCore.Http;
+using ThermalPrinterService.Exceptions;
 using ThermalPrinterService.Models;
 
 public class PrinterService
@@ -33,7 +35,9 @@ public class PrinterService
     {
         var jobId = Guid.NewGuid().ToString();
 
+        // Check printer for global errors like PAPER_OUT / PAPER_JAM
         CheckPrinterState("print_text", jobId);
+
         _lastPrintedText = text;
 
         AddLog("print_text", "success", jobId);
@@ -43,13 +47,9 @@ public class PrinterService
     {
         var jobId = Guid.NewGuid().ToString();
 
-        CheckPrinterState("print_image", jobId);
 
-        if (string.IsNullOrWhiteSpace(imageBase64))
-        {
-            AddLog("print_image", "error", jobId);
-            throw new InvalidOperationException("Image data is empty.");
-        }
+        // Check printer for global errors like PAPER_OUT / PAPER_JAM
+        CheckPrinterState("print_image", jobId);
 
         AddLog("print_image", "success", jobId);
     }
@@ -59,19 +59,13 @@ public class PrinterService
         return _logs;
     }
 
+
     public void Reprint()
     {
         var jobId = Guid.NewGuid().ToString();
 
         CheckPrinterState("reprint", jobId);
 
-        if (string.IsNullOrWhiteSpace(_lastPrintedText))
-        {
-            AddLog("reprint", "error", jobId);
-            throw new InvalidOperationException("No previous print found.");
-        }
-
-        Console.WriteLine($"Reprinting text: {_lastPrintedText}");
         AddLog("reprint", "success", jobId);
     }
 
@@ -113,7 +107,7 @@ public class PrinterService
             PrinterErrorCodes.COVER_OPEN => "Printer cover is open.",
             PrinterErrorCodes.OVERHEAT => "Printer is overheated.",
             PrinterErrorCodes.COMM_ERROR => "Printer communication failed.",
-            PrinterErrorCodes.UNKNOWN_COMMAND => "Unknown printer command.",
+            PrinterErrorCodes.UNKNOWN_COMMAND => "Unknown printer command.", 
             _ => "Unknown printer error."
         };
     }
@@ -133,7 +127,9 @@ public class PrinterService
                 }
             );
 
-            throw new InvalidOperationException(GetErrorDetail(PrinterErrorCodes.COMM_ERROR));
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                GetErrorDetail(PrinterErrorCodes.COMM_ERROR));
         }
 
         if (_currentErrorCode != null)
@@ -149,7 +145,9 @@ public class PrinterService
                 }
             );
 
-            throw new InvalidOperationException(GetErrorDetail(_currentErrorCode));
+            throw new ApiException(
+                StatusCodes.Status409Conflict,
+                GetErrorDetail(_currentErrorCode));
         }
     }
 }

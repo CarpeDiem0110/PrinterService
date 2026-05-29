@@ -8,4 +8,5 @@ public static class PrinterErrorCodes
     public const string OVERHEAT = "OVERHEAT";
     public const string COMM_ERROR = "COMM_ERROR";
     public const string UNKNOWN_COMMAND = "UNKNOWN_COMMAND";
+  
 }
