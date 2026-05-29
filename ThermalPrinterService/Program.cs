@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using ThermalPrinterService.Exceptions;
 using ThermalPrinterService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +13,39 @@ builder.Services.AddSingleton<PrinterService>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        context.Response.ContentType = "application/problem+json";
+
+        if (exception is ApiException apiException)
+        {
+            context.Response.StatusCode = apiException.StatusCode;
+
+            await context.Response.WriteAsJsonAsync(new ProblemDetails
+            {
+                Status = apiException.StatusCode,
+                Title = "Request failed",
+                Detail = apiException.Message
+            });
+
+            return;
+        }
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        await context.Response.WriteAsJsonAsync(new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            Title = "Server error",
+            Detail = "Unexpected server error."
+        });
+    });
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -21,3 +57,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program;
