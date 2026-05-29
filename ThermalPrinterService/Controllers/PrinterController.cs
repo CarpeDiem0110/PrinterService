@@ -77,5 +77,31 @@ public class PrinterController : ControllerBase
     }
 
 
+    [HttpPost("simulate-error")]
+    public IActionResult SimulateError([FromBody] SimulateErrorRequest request)
+    {
+        _printerService.SimulateError(request.ErrorCode);
+
+        return Ok(new
+        {
+            message = $"Simulated error: {request.ErrorCode}"
+        });
+    }
+
+
+    [HttpPost("clear-error")]
+    public IActionResult ClearError()
+    {
+        _printerService.ClearError();
+
+        return Ok(new
+        {
+            message = "Printer error cleared."
+        });
+    }
+
+   
+
+
     
 }

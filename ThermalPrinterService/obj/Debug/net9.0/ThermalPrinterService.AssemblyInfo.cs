@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ThermalPrinterService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+350168a7e7d4ff76a253396a33a9e0ffd78072d5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e7a013a4721e9d6d03cf733edc67ff85ee2b51c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("ThermalPrinterService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ThermalPrinterService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
