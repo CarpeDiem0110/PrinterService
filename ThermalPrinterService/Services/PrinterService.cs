@@ -29,6 +29,9 @@ public class PrinterService
 
     public void PrintText(string text)
     {
+        
+        var jobId = Guid.NewGuid().ToString();
+        
         if (!IsConnected)
         {
             AddLog("print_text", "error", "Printer is not connected.");
@@ -36,11 +39,33 @@ public class PrinterService
         }
          _lastPrintedText = text;
         
-        var jobId = Guid.NewGuid().ToString();
+        
 
         AddLog("print_text", "success", $"Printed text: {text}",jobId);
     }
 
+
+public void PrintImage(string imageBase64)
+{
+   
+    var jobId = Guid.NewGuid().ToString();
+   
+    if (!IsConnected)
+    {
+        AddLog("print_image", "error", "Printer is not connected.");
+        throw new InvalidOperationException("Printer is not connected.");
+    }
+
+    if (string.IsNullOrWhiteSpace(imageBase64))
+    {
+        AddLog("print_image", "error", "Image data is empty.");
+        throw new InvalidOperationException("Image data is empty.");
+    }
+
+   
+
+    AddLog("print_image", "success", "Image printed successfully.",jobId);
+}
 
 
 // helper method for adding log 

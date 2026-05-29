@@ -45,6 +45,18 @@ public class PrinterController : ControllerBase
     }
 
 
+    [HttpPost("print/image")]
+    public IActionResult PrintImage([FromBody] PrintImageRequest request)
+    {
+    _printerService.PrintImage(request.ImageBase64);
+
+    return Ok(new
+    {
+        message = "Image printed successfully"
+    });
+    }
+
+
     [HttpGet("logs")]
     public IActionResult GetLogs()
     {

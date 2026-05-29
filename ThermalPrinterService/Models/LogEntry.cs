@@ -8,9 +8,10 @@ public class LogEntry
 
     public string Status { get; set; } = "";
 
-    public string Message { get; set; } = "";
-
     public string? ConnectionMode { get; set; }
 
     public string? JobId { get; set; }
+
+    public LogError? Error { get; set; }
+
 }
