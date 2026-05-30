@@ -20,6 +20,19 @@ This project does not require a `.env` file. Default development settings are lo
 
 The default local port is defined by the profile in `ThermalPrinterService/Properties/launchSettings.json`. When running with Docker, the container listens on port `8080`.
 
+
+
+
+## Video Demo
+
+
+https://github.com/user-attachments/assets/bb04b70d-ccf0-4790-9027-012fc0b44e66
+
+
+
+
+
+
 ## Running
 
 Run locally:
