@@ -1,17 +1,22 @@
 namespace ThermalPrinterService.Services;
 
 using Microsoft.AspNetCore.Http;
+using ThermalPrinterService.Dtos;
 using ThermalPrinterService.Exceptions;
 using ThermalPrinterService.Models;
 
 public class PrinterService
 {
+    private const string JobStatusPending = "pending";
+    private const string JobStatusCompleted = "completed";
+    private const string JobStatusFailed = "failed";
+
     public string? ConnectionMode { get; private set; }
     public bool IsConnected { get; private set; }
 
-    private string? _lastPrintedText;
     private string? _currentErrorCode;
     private readonly List<LogEntry> _logs = new();
+    private readonly List<PrinterJob> _jobs = new();
 
     public void Connect(string mode)
     {
@@ -21,37 +26,59 @@ public class PrinterService
         AddLog("connect", "success");
     }
 
-    public object GetStatus()
+    public PrinterStatusResponseDto GetStatus()
     {
-        return new
+        var lastJob = _jobs
+            .OrderByDescending(job => job.UpdatedAt)
+            .FirstOrDefault();
+
+        return new PrinterStatusResponseDto
         {
-            service = "Thermal Printer Service",
-            connected = IsConnected,
-            mode = ConnectionMode
+            Service = "Thermal Printer Service",
+            Connection = new ConnectionStatusDto
+            {
+                Connected = IsConnected,
+                Mode = ConnectionMode
+            },
+            Health = new PrinterHealthStatusDto
+            {
+                Paper = GetPaperStatus(),
+                Cover = GetCoverStatus(),
+                Temperature = GetTemperatureStatus(),
+                CurrentErrorCode = _currentErrorCode,
+                CurrentErrorDetail = _currentErrorCode is null
+                    ? null
+                    : GetErrorDetail(_currentErrorCode)
+            },
+            LastJob = lastJob is null
+                ? null
+                : new LastJobStatusDto
+                {
+                    Operation = lastJob.Operation,
+                    Status = lastJob.Status,
+                    JobId = lastJob.JobId,
+                    Timestamp = lastJob.UpdatedAt
+                },
+            Queue = new QueueSummaryDto
+            {
+                Pending = 0,
+                Active = 0,
+                Completed = _jobs.Count(job => job.Status == JobStatusCompleted),
+                Failed = _jobs.Count(job => job.Status == JobStatusFailed)
+            }
         };
     }
 
     public void PrintText(string text)
     {
-        var jobId = Guid.NewGuid().ToString();
-
-        // Check printer for global errors like PAPER_OUT / PAPER_JAM
-        CheckPrinterState("print_text", jobId);
-
-        _lastPrintedText = text;
-
-        AddLog("print_text", "success", jobId);
+        var job = CreateJob("print_text", text: text);
+        ProcessJob(job);
     }
 
     public void PrintImage(string imageBase64)
     {
-        var jobId = Guid.NewGuid().ToString();
-
-
-        // Check printer for global errors like PAPER_OUT / PAPER_JAM
-        CheckPrinterState("print_image", jobId);
-
-        AddLog("print_image", "success", jobId);
+        var job = CreateJob("print_image", imageBase64: imageBase64);
+        ProcessJob(job);
     }
 
     public List<LogEntry> GetLogs()
@@ -62,11 +89,18 @@ public class PrinterService
 
     public void Reprint()
     {
-        var jobId = Guid.NewGuid().ToString();
+        var job = _jobs
+            .OrderByDescending(item => item.UpdatedAt)
+            .FirstOrDefault(item => item.Status == JobStatusFailed);
 
-        CheckPrinterState("reprint", jobId);
+        if (job is null)
+        {
+            throw new ApiException(
+                StatusCodes.Status404NotFound,
+                "No failed job found to reprint.");
+        }
 
-        AddLog("reprint", "success", jobId);
+        ProcessJob(job, "reprint");
     }
 
     public void SimulateError(string errorCode)
@@ -112,6 +146,66 @@ public class PrinterService
         };
     }
 
+    private PrinterJob CreateJob(
+        string operation,
+        string? text = null,
+        string? imageBase64 = null)
+    {
+        var job = new PrinterJob
+        {
+            JobId = Guid.NewGuid().ToString(),
+            Operation = operation,
+            Text = text,
+            ImageBase64 = imageBase64,
+            Status = JobStatusPending,
+            UpdatedAt = DateTime.Now
+        };
+
+        _jobs.Add(job);
+        return job;
+    }
+
+    private void ProcessJob(PrinterJob job, string? logOperationOverride = null)
+    {
+        var operation = logOperationOverride ?? job.Operation;
+
+        try
+        {
+            CheckPrinterState(operation, job.JobId);
+
+            job.Status = JobStatusCompleted;
+            job.UpdatedAt = DateTime.Now;
+
+            AddLog(operation, "success", job.JobId);
+        }
+        catch (ApiException)
+        {
+            job.Status = JobStatusFailed;
+            job.UpdatedAt = DateTime.Now;
+            throw;
+        }
+    }
+
+    private string GetPaperStatus()
+    {
+        return _currentErrorCode switch
+        {
+            PrinterErrorCodes.PAPER_OUT => "out",
+            PrinterErrorCodes.PAPER_JAM => "jammed",
+            _ => "ok"
+        };
+    }
+
+    private string GetCoverStatus()
+    {
+        return _currentErrorCode == PrinterErrorCodes.COVER_OPEN ? "open" : "closed";
+    }
+
+    private string GetTemperatureStatus()
+    {
+        return _currentErrorCode == PrinterErrorCodes.OVERHEAT ? "overheated" : "normal";
+    }
+
     private void CheckPrinterState(string operation, string jobId)
     {
         if (!IsConnected)
@@ -149,5 +243,20 @@ public class PrinterService
                 StatusCodes.Status409Conflict,
                 GetErrorDetail(_currentErrorCode));
         }
+    }
+
+    private sealed class PrinterJob
+    {
+        public string JobId { get; init; } = "";
+
+        public string Operation { get; init; } = "";
+
+        public string Status { get; set; } = JobStatusPending;
+
+        public DateTime UpdatedAt { get; set; }
+
+        public string? Text { get; init; }
+
+        public string? ImageBase64 { get; init; }
     }
 }
