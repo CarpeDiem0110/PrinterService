@@ -40,6 +40,11 @@ Accept: application/json
 
 ###
 
+GET {{ThermalPrinterService_HostAddress}}/logs/export
+Accept: text/csv
+
+###
+
 POST {{ThermalPrinterService_HostAddress}}/simulate-error
 Content-Type: application/json
 

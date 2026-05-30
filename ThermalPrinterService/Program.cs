@@ -26,6 +26,7 @@ builder.Services.AddSingleton<PrinterLogService>();
 builder.Services.AddSingleton<PrinterHealthService>();
 builder.Services.AddSingleton<PrinterJobService>();
 builder.Services.AddSingleton<PrinterService>();
+builder.Services.AddSingleton<LogExportService>();
 
 var app = builder.Build();
 

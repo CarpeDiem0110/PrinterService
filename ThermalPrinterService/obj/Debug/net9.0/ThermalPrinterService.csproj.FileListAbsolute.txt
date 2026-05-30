@@ -213,3 +213,16 @@ C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-colored-logs\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-colored-logs\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-colored-logs\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\appsettings.Development.json
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\appsettings.json
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.staticwebassets.endpoints.json
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.exe
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.deps.json
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.runtimeconfig.json
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\ThermalPrinterService.pdb
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\Microsoft.OpenApi.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\eEren\Desktop\thermalPrinterService\ThermalPrinterService\build-verify-log-export\Swashbuckle.AspNetCore.SwaggerUI.dll

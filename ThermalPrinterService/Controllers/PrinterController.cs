@@ -9,10 +9,14 @@ namespace ThermalPrinterService.Controllers;
 public class PrinterController : ControllerBase
 {
     private readonly PrinterService _printerService;
+    private readonly LogExportService _logExportService;
 
-    public PrinterController(PrinterService printerService)
+    public PrinterController(
+        PrinterService printerService,
+        LogExportService logExportService)
     {
         _printerService = printerService;
+        _logExportService = logExportService;
     }
 
     [HttpPost("connect")]
@@ -65,7 +69,17 @@ public class PrinterController : ControllerBase
         return Ok(_printerService.GetLogs());
     }
 
+    [HttpGet("logs/export")]
+    public IActionResult ExportLogs()
+    {
+        var csv = _logExportService.ExportAsCsv(_printerService.GetLogs());
+        var fileName = $"printer-logs-{DateTime.Now:yyyyMMddHHmmss}.csv";
 
+        return File(
+            System.Text.Encoding.UTF8.GetBytes(csv),
+            "text/csv",
+            fileName);
+    }
 
     [HttpPost("reprint")]
     public IActionResult Reprint()  
