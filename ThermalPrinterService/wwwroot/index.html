@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thermal Printer Service</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <main class="shell">
+        <header class="topbar">
+            <div>
+                <h1>Thermal Printer Service</h1>
+                <p id="serviceState">Status not loaded</p>
+            </div>
+            <button id="reprintBtn" type="button">Reprint Failed Job</button>
+        </header>
+
+        <section class="layout">
+            <section class="panel status-panel">
+                <div class="panel-header">
+                    <h2>Printer Status</h2>
+                </div>
+                <dl class="status-list">
+                    <div>
+                        <dt>Connected</dt>
+                        <dd id="connectedValue">-</dd>
+                    </div>
+                    <div>
+                        <dt>Mode</dt>
+                        <dd id="modeValue">-</dd>
+                    </div>
+                    <div>
+                        <dt>Paper</dt>
+                        <dd id="paperValue">-</dd>
+                    </div>
+                    <div>
+                        <dt>Cover</dt>
+                        <dd id="coverValue">-</dd>
+                    </div>
+                    <div>
+                        <dt>Temperature</dt>
+                        <dd id="temperatureValue">-</dd>
+                    </div>
+                </dl>
+                <div class="status-details">
+                    <div class="subsection">
+                        <h3>Active Errors</h3>
+                        <div id="activeErrors" class="chips"></div>
+                    </div>
+                    <div class="subsection">
+                        <h3>Last Job</h3>
+                        <pre id="lastJobValue" class="compact-json">-</pre>
+                    </div>
+                    <div class="subsection">
+                        <h3>Queue</h3>
+                        <div id="queueSummary" class="queue"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Connection</h2>
+                </div>
+                <div class="segmented" role="group" aria-label="Connection mode">
+                    <label>
+                        <input type="radio" name="mode" value="usb" checked>
+                        <span>USB</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="mode" value="lan">
+                        <span>LAN</span>
+                    </label>
+                </div>
+                <button id="connectBtn" type="button">Connect</button>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Print</h2>
+                </div>
+                <label class="field">
+                    <span>Text</span>
+                    <textarea id="printTextInput" rows="4" maxlength="1000"></textarea>
+                </label>
+                <button id="printTextBtn" type="button">Print Text</button>
+                <label class="field">
+                    <span>Image</span>
+                    <input id="imageInput" type="file" accept="image/*">
+                </label>
+                <button id="printImageBtn" type="button">Upload Image</button>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Error Simulation</h2>
+                </div>
+                <div class="checkbox-grid" id="errorOptions">
+                    <label><input type="checkbox" value="PAPER_OUT"> PAPER_OUT</label>
+                    <label><input type="checkbox" value="PAPER_JAM"> PAPER_JAM</label>
+                    <label><input type="checkbox" value="COVER_OPEN"> COVER_OPEN</label>
+                    <label><input type="checkbox" value="OVERHEAT"> OVERHEAT</label>
+                </div>
+                <div class="button-row">
+                    <button id="simulateErrorBtn" type="button">Simulate Error</button>
+                    <button id="clearErrorBtn" class="secondary" type="button">Clear Error</button>
+                </div>
+            </section>
+
+            <section class="panel logs-panel">
+                <div class="panel-header">
+                    <h2>Logs</h2>
+                    <div class="button-row">
+                        <button id="getLogsBtn" class="secondary" type="button">Get Logs</button>
+                        <button id="exportCsvBtn" class="secondary" type="button">Export CSV</button>
+                        <button id="exportJsonBtn" class="secondary" type="button">Export JSON</button>
+                    </div>
+                </div>
+                <pre id="logsOutput" class="logs-output">[]</pre>
+            </section>
+
+        </section>
+
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </main>
+    <script src="/app.js"></script>
+</body>
+</html>
