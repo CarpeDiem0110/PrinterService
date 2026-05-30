@@ -35,32 +35,34 @@ public class PrinterController : ControllerBase
     [HttpPost("print/text")]
     public IActionResult PrintText([FromBody] PrintTextRequestDto request)
     {
-    _printerService.PrintText(request.Text);
+        _printerService.PrintText(request.Text);
 
-    return Ok(new
-    {
-        message = "Text printed successfully",
-        text = request.Text
-    });
+        return Ok(new
+        {
+            message = "Text printed successfully",
+            text = request.Text
+        });
     }
 
-
     [HttpPost("print/image")]
-    public IActionResult PrintImage([FromBody] PrintImageRequestDto request)
+    public IActionResult PrintImage([FromForm] PrintImageRequestDto request)
     {
-    _printerService.PrintImage(request.ImageBase64);
+        _printerService.PrintImage(request.Image);
 
-    return Ok(new
-    {
-        message = "Image printed successfully"
-    });
+        return Ok(new
+        {
+            message = "Image print request processed.",
+            fileName = request.Image.FileName,
+            contentType = request.Image.ContentType,
+            size = request.Image.Length
+        });
     }
 
 
     [HttpGet("logs")]
     public IActionResult GetLogs()
     {
-    return Ok(_printerService.GetLogs());
+        return Ok(_printerService.GetLogs());
     }
 
 
@@ -68,12 +70,12 @@ public class PrinterController : ControllerBase
     [HttpPost("reprint")]
     public IActionResult Reprint()  
     {
-    _printerService.Reprint();
+        _printerService.Reprint();
 
-    return Ok(new
-    {
-        message = "Last print reprinted successfully"
-    });
+        return Ok(new
+        {
+            message = "Last print reprinted successfully"
+        });
     }
 
 

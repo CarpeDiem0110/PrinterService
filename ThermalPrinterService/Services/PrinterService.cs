@@ -1,5 +1,6 @@
 namespace ThermalPrinterService.Services;
 
+using Microsoft.AspNetCore.Http;
 using ThermalPrinterService.Dtos;
 using ThermalPrinterService.Models;
 
@@ -51,9 +52,9 @@ public class PrinterService
         _printerJobService.PrintText(text);
     }
 
-    public void PrintImage(string imageBase64)
+    public void PrintImage(IFormFile image)
     {
-        _printerJobService.PrintImage(imageBase64);
+        _printerJobService.PrintImage(image);
     }
 
     public List<LogEntry> GetLogs()

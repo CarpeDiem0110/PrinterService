@@ -12,5 +12,9 @@ public class PrinterJob
 
     public string? Text { get; init; }
 
-    public string? ImageBase64 { get; init; }
+    public string? ImageFileName { get; init; }
+
+    public string? ImageContentType { get; init; }
+
+    public long? ImageSizeBytes { get; init; }
 }
