@@ -12,6 +12,5 @@ public class LogEntry
 
     public string? JobId { get; set; }
 
-    public LogError? Error { get; set; }
-
+    public List<LogError> Errors { get; set; } = new();
 }

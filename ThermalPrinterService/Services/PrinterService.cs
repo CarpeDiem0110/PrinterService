@@ -67,15 +67,22 @@ public class PrinterService
         _printerJobService.Reprint();
     }
 
-    public void SimulateError(string errorCode)
+    public void SimulateError(IEnumerable<string> errorCodes)
     {
-        _printerState.CurrentErrorCode = errorCode;
+        foreach (var errorCode in errorCodes.Distinct())
+        {
+            if (!_printerState.CurrentErrorCodes.Contains(errorCode))
+            {
+                _printerState.CurrentErrorCodes.Add(errorCode);
+            }
+        }
+
         _printerLogService.AddLog("simulate_error", "success");
     }
 
     public void ClearError()
     {
-        _printerState.CurrentErrorCode = null;
+        _printerState.CurrentErrorCodes.Clear();
         _printerLogService.AddLog("clear_error", "success");
     }
 }

@@ -6,5 +6,5 @@ public class PrinterState
 
     public bool IsConnected { get; set; }
 
-    public string? CurrentErrorCode { get; set; }
+    public List<string> CurrentErrorCodes { get; } = new();
 }

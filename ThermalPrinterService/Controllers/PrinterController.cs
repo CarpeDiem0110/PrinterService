@@ -96,11 +96,14 @@ public class PrinterController : ControllerBase
     [HttpPost("simulate-error")]
     public IActionResult SimulateError([FromBody] SimulateErrorRequestDto request)
     {
-        _printerService.SimulateError(request.ErrorCode);
+        var errorCodes = request.GetRequestedErrorCodes().Distinct().ToList();
+
+        _printerService.SimulateError(errorCodes);
 
         return Ok(new
         {
-            message = $"Simulated error: {request.ErrorCode}"
+            message = "Simulated errors updated.",
+            errorCodes
         });
     }
 

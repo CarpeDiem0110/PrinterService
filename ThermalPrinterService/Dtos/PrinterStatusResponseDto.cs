@@ -28,9 +28,14 @@ public class PrinterHealthStatusDto
 
     public string Temperature { get; set; } = "normal";
 
-    public string? CurrentErrorCode { get; set; }
+    public List<PrinterErrorStatusDto> CurrentErrors { get; set; } = new();
+}
 
-    public string? CurrentErrorDetail { get; set; }
+public class PrinterErrorStatusDto
+{
+    public string Code { get; set; } = "";
+
+    public string Detail { get; set; } = "";
 }
 
 public class LastJobStatusDto

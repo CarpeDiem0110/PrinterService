@@ -9,7 +9,7 @@ public class LogExportService
     {
         var csv = new StringBuilder();
 
-        csv.AppendLine("Timestamp,Operation,Status,ConnectionMode,JobId,ErrorCode,ErrorDetail");
+        csv.AppendLine("Timestamp,Operation,Status,ConnectionMode,JobId,ErrorCodes,ErrorDetails");
 
         foreach (var log in logs)
         {
@@ -20,8 +20,8 @@ public class LogExportService
                 Escape(log.Status),
                 Escape(log.ConnectionMode),
                 Escape(log.JobId),
-                Escape(log.Error?.Code),
-                Escape(log.Error?.Detail)));
+                Escape(string.Join("; ", log.Errors.Select(error => error.Code))),
+                Escape(string.Join("; ", log.Errors.Select(error => error.Detail)))));
         }
 
         return csv.ToString();

@@ -20,15 +20,20 @@ public class PrinterHealthService
 
     public PrinterHealthStatusDto GetHealthStatus()
     {
+        var currentErrors = _printerState.CurrentErrorCodes
+            .Select(errorCode => new PrinterErrorStatusDto
+            {
+                Code = errorCode,
+                Detail = GetErrorDetail(errorCode)
+            })
+            .ToList();
+
         return new PrinterHealthStatusDto
         {
             Paper = GetPaperStatus(),
             Cover = GetCoverStatus(),
             Temperature = GetTemperatureStatus(),
-            CurrentErrorCode = _printerState.CurrentErrorCode,
-            CurrentErrorDetail = _printerState.CurrentErrorCode is null
-                ? null
-                : GetErrorDetail(_printerState.CurrentErrorCode)
+            CurrentErrors = currentErrors
         };
     }
 
@@ -36,20 +41,20 @@ public class PrinterHealthService
     {
         if (!_printerState.IsConnected)
         {
-            AddErrorLog(operation, jobId, PrinterErrorCodes.COMM_ERROR);
+            AddErrorLog(operation, jobId, new[] { PrinterErrorCodes.COMM_ERROR });
 
             throw new ApiException(
                 StatusCodes.Status409Conflict,
                 GetErrorDetail(PrinterErrorCodes.COMM_ERROR));
         }
 
-        if (_printerState.CurrentErrorCode != null)
+        if (_printerState.CurrentErrorCodes.Count > 0)
         {
-            AddErrorLog(operation, jobId, _printerState.CurrentErrorCode);
+            AddErrorLog(operation, jobId, _printerState.CurrentErrorCodes);
 
             throw new ApiException(
                 StatusCodes.Status409Conflict,
-                GetErrorDetail(_printerState.CurrentErrorCode));
+                GetActiveErrorMessage());
         }
     }
 
@@ -67,37 +72,57 @@ public class PrinterHealthService
         };
     }
 
-    private void AddErrorLog(string operation, string jobId, string errorCode)
+    private void AddErrorLog(
+        string operation,
+        string jobId,
+        IEnumerable<string> errorCodes)
     {
+        var errors = errorCodes
+            .Select(errorCode => new LogError
+            {
+                Code = errorCode,
+                Detail = GetErrorDetail(errorCode)
+            })
+            .ToList();
+
         _printerLogService.AddLog(
             operation,
             "error",
             jobId,
-            new LogError
-            {
-                Code = errorCode,
-                Detail = GetErrorDetail(errorCode)
-            }
+            errors
         );
     }
 
     private string GetPaperStatus()
     {
-        return _printerState.CurrentErrorCode switch
+        if (_printerState.CurrentErrorCodes.Contains(PrinterErrorCodes.PAPER_OUT))
         {
-            PrinterErrorCodes.PAPER_OUT => "out",
-            PrinterErrorCodes.PAPER_JAM => "jammed",
-            _ => "ok"
-        };
+            return "out";
+        }
+
+        if (_printerState.CurrentErrorCodes.Contains(PrinterErrorCodes.PAPER_JAM))
+        {
+            return "jammed";
+        }
+
+        return "ok";
     }
 
     private string GetCoverStatus()
     {
-        return _printerState.CurrentErrorCode == PrinterErrorCodes.COVER_OPEN ? "open" : "closed";
+        return _printerState.CurrentErrorCodes.Contains(PrinterErrorCodes.COVER_OPEN) ? "open" : "closed";
     }
 
     private string GetTemperatureStatus()
     {
-        return _printerState.CurrentErrorCode == PrinterErrorCodes.OVERHEAT ? "overheated" : "normal";
+        return _printerState.CurrentErrorCodes.Contains(PrinterErrorCodes.OVERHEAT) ? "overheated" : "normal";
+    }
+
+    private string GetActiveErrorMessage()
+    {
+        var errorDetails = _printerState.CurrentErrorCodes
+            .Select(GetErrorDetail);
+
+        return $"Printer has active errors: {string.Join(" ", errorDetails)}";
     }
 }

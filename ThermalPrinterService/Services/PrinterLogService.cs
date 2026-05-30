@@ -21,7 +21,7 @@ public class PrinterLogService
         string operation,
         string status,
         string? jobId = null,
-        LogError? error = null)
+        IEnumerable<LogError>? errors = null)
     {
         _logs.Add(new LogEntry
         {
@@ -30,7 +30,7 @@ public class PrinterLogService
             Status = status,
             ConnectionMode = _printerState.ConnectionMode,
             JobId = jobId,
-            Error = error
+            Errors = errors?.ToList() ?? new List<LogError>()
         });
     }
 }
