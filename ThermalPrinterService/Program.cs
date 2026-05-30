@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ThermalPrinterService.Exceptions;
+using ThermalPrinterService.Models;
 using ThermalPrinterService.Services;
 using System.Text.Json.Serialization;
 
@@ -19,6 +20,10 @@ builder.Services.AddSwaggerGen();
 
 
 
+builder.Services.AddSingleton<PrinterState>();
+builder.Services.AddSingleton<PrinterLogService>();
+builder.Services.AddSingleton<PrinterHealthService>();
+builder.Services.AddSingleton<PrinterJobService>();
 builder.Services.AddSingleton<PrinterService>();
 
 var app = builder.Build();

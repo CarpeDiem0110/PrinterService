@@ -1,6 +1,0 @@
-@ThermalPrinterService_HostAddress = http://localhost:5133
-
-GET {{ThermalPrinterService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
